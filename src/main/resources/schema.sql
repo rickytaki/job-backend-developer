@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS user_info;
+
+CREATE TABLE user_info (
+  email VARCHAR(128) NOT NULL PRIMARY KEY ,
+  name VARCHAR(128) NOT NULL ,
+  age INTEGER,
+  password VARCHAR(128) NOT NULL,
+  street VARCHAR(128) NOT NULL,
+  number INTEGER NOT NULL,
+  zip_code VARCHAR(20)
+);
