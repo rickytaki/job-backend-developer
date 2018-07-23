@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class UserInfoService {
     }
 
     @Cacheable(value = "byName", key = "#name")
+    @PreAuthorize("#name == authentication.principal.name")
     public UserInfoResponse findByName (String name) throws RuntimeException{
 
         return  userInfoDao.findByName(name)
@@ -42,6 +44,7 @@ public class UserInfoService {
     }
 
     @Cacheable(value = "byEmail", key = "#email")
+    @PreAuthorize("#email == authentication.principal.username")
     public UserInfoResponse findByEmail (String email) throws  RuntimeException {
 
         return userInfoDao.findByEmail(email)
