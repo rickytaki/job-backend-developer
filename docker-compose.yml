@@ -1,0 +1,25 @@
+version: '3'
+services:
+  login:
+    image: rickytaki/login:latest
+    container_name: login
+    depends_on:
+      - db
+      - redis
+    ports:
+     - "8080:8080"
+    links:
+     - db:db
+     - redis:redis
+  db:
+    image: "postgres:latest"
+    container_name: loginDb
+    environment:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: sa
+          POSTGRES_DB: login
+    volumes:
+        - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/init.sql
+  redis:
+    image: "redis:latest"
+    container_name: redis
