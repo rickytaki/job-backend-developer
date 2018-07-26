@@ -2,11 +2,11 @@
 
 ### Live
 
-Este projeto está rodando na AWS em uma EC2, em um container Docker usando ECS, ECR, Elastic Cache, RDS e uma CDN no link: [ch.rickytaki.com](ch.rickytaki.com). Se colocado atrás de um Load Balancer, é possível aumentar a quantidade de serviços rodando de forma simples na AWS.
+Este projeto está rodando na AWS em uma EC2, em um container Docker usando ECS, ECR, Elastic Cache, RDS e uma CDN no link: [ch.rickytaki.com/users](ch.rickytaki.com/users). Se colocado atrás de um Load Balancer, é possível aumentar a quantidade de serviços rodando de forma simples na AWS.
 
 #### Create POST
 
-[ch.rickytaki.com/create](ch.rickytaki.com/create)
+[ch.rickytaki.com/users/create](ch.rickytaki.com/users/create)
 
 Está público, sem restrições de autenticação ou autorização.
 
@@ -27,19 +27,19 @@ JSON Exemplo:
 
 #### Find By name GET
 
-[ch.rickytaki.com/findByName/NOME](ch.rickytaki.com/findByName/NOME)
+[ch.rickytaki.com/users/findByName/NOME](ch.rickytaki.com/users/findByName/NOME)
   
 Substitua NOME pelo nome procurado e envie email e password no header, se estiver Postman, bast selecionar GET e enviar basic auth com email e password.
   
-Exemplo caso tenha criado o usuario do create acima: [ch.rickytaki.com/findByName/test]().
+Exemplo caso tenha criado o usuario do create acima: [ch.rickytaki.com/users/findByName/test]().
 
 #### Find By Email GET
 
-[ch.rickytaki.com/findByEmail/EMAIL](ch.rickytaki.com/findByEmail/EMAIL)
+[ch.rickytaki.com/users/findByEmail/EMAIL](ch.rickytaki.com/users/findByEmail/EMAIL)
 
 Substitua EMAIL pelo email do usuário procurado e envie email e password no header, se estiver Postman, bast selecionar GET e enviar basic auth com email e password.
   
-Exemplo caso tenha criado o usuario do create acima: [ch.rickytaki.com/findByName/teste@intelipost.com]().
+Exemplo caso tenha criado o usuario do create acima: [ch.rickytaki.com/users/findByName/teste@intelipost.com]().
 
 ### Rodando localmente
 
@@ -58,9 +58,9 @@ docker-compose up -d
 E pronto! Você agora tem um Redis, um postgres e o serviço rodando localmente na sua máquina na porta ```8080```, dentro de uma network privada criada pelo docker-compose. Você pode acessar pelos links: 
 
 ```
-localhost:8080/create
-localhost:8080/findByName/NOME
-localhsot:8080/findByEmail/EMAIL
+localhost:8080/users/create
+localhost:8080/users/findByName/NOME
+localhsot:8080/users/findByEmail/EMAIL
 ```
 Lembrando de seguir as mesmas regras expostas acima.
 
@@ -109,6 +109,7 @@ Para descobrir os possíveis gargalos, deve-se analisar a infra:
 - Hardware do servidor: Os recursos estão provisionados de acordo com a necessidade do sistema!? É possível clonar a infra e rodar um stress test? É possível distribuir a aplicação em múltiplos servidores?
 - Latência da rede: Os servidores e banco de dados estão em regiões distantes? Ou então estão longe da localização dos usuários alvo?
 - Aplicação: É distribuida? Tem Cache? Expõe algum tipo de ListAll mesmo que paginado? Existe algum serviço requisitando informações ao mesmo tempo do pico de requests?
+- As colunas do BD estão indexadas?
 
 Além disso, deve-se analisar a arquitetura do sistema e, partindo do pressuposto de algo legado e deficitário, propus e implementei o seguinte:
 
@@ -127,6 +128,8 @@ Além disso, deve-se analisar a arquitetura do sistema e, partindo do pressupost
 - Caso fosse uma aplicação mais complexa e/ou distribuída mas com o mesmo volume de acessos, deveríamos partir para um auth server que teria por responsabilidade apenas conceder o jwt e cada serviço teria seu mapper para então obter os claims do payload /(caso autenticação seja um issue) e orquestrar as multiplas instancias de cada serviço por um service discovery /(Ex.: Eureka) e carregando as configurações de um config server;
 - Poderíamos considerar o autoScaling, automatizando a replica de instancias nos momentos de pico e aumentar o numero de nós de cache, mas isso seria financeiramente adequado ao projeto?;
 - O banco de dados está publico apenas para se algum avaliador do teste querer fazer alguma query, em produção, limitaria o acesso do security group apenas para a vpc.
+- Foi utilizado pathParam e não queryParam a fim de que a CDN cacheie o resultado
+- Todos os testes são testes unitários com a exceção da pasta IT /(Assim nomeada seguindo o padrão do failsafe, o que dispensa maiores configurações) sendo a única suite a carregar todo o contexto do Spring e o servidor.
 
 ### Stack
 
