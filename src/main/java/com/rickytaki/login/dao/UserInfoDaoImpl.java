@@ -56,7 +56,7 @@ public class UserInfoDaoImpl implements UserInfoDao {
             }, param);
             return found;
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         }
     }
 }
