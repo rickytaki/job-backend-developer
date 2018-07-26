@@ -59,7 +59,7 @@ public class LoginAppIT {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(jsonMapper.writeValueAsString(user),headers);
-        Assert.assertThat(restTemplate.exchange("/create", HttpMethod.POST, request,String.class)
+        Assert.assertThat(restTemplate.exchange("/users/create", HttpMethod.POST, request,String.class)
                 .getStatusCode(), is(HttpStatus.CREATED));
     }
 
@@ -73,7 +73,7 @@ public class LoginAppIT {
     public void whenGetUserByName_ShoudReturnUser() {
 
         UserInfoResponse foundUser = restTemplate.withBasicAuth("madruguinha@login.com", "madruguinha@123")
-                .getForObject("/findByName/madruguinha", UserInfoResponse.class);
+                .getForObject("/users/findByName/madruguinha", UserInfoResponse.class);
 
         Assert.assertEquals(foundUser.getStreet(), "Vila Chaves");
         Assert.assertEquals(foundUser.getEmail(), "madruguinha@login.com");
@@ -90,7 +90,7 @@ public class LoginAppIT {
     public void whenGetUserByEmail_ShoudReturnUser() {
 
         UserInfoResponse foundUser = restTemplate.withBasicAuth("madruguinha@login.com", "madruguinha@123")
-                .getForObject("/findByEmail/madruguinha@login.com", UserInfoResponse.class);
+                .getForObject("/users/findByEmail/madruguinha@login.com", UserInfoResponse.class);
 
         Assert.assertEquals(foundUser.getStreet(), "Vila Chaves");
         Assert.assertEquals(foundUser.getEmail(), "madruguinha@login.com");
