@@ -73,7 +73,7 @@ public class UserInfoControllerTest {
     @WithMockUser
     public void whenNotNull_ShouldCreateUser() throws Exception{
         doNothing().when(service).save(any());
-        mvc.perform(post("/create")
+        mvc.perform(post("/users/create")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonMapper.writeValueAsString(user)))
@@ -85,7 +85,7 @@ public class UserInfoControllerTest {
     @WithMockUser
     public void givenUser_FindByName_ShouldRetrieve() throws Exception{
         when(service.findByName(user.getName())).thenReturn(response);
-        mvc.perform(get("/findByName/controller"))
+        mvc.perform(get("/users/findByName/controller"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().string(containsString("controller")));
@@ -96,7 +96,7 @@ public class UserInfoControllerTest {
     @WithMockUser
     public void givenUser_FindByEmail_ShouldRetrieve() throws Exception{
         when(service.findByEmail(user.getEmail())).thenReturn(response);
-        mvc.perform(get("/findByEmail/controller@controller.com"))
+        mvc.perform(get("/users/findByEmail/controller@controller.com"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("controller")));
         Assert.assertEquals(user.getName(), controller.findByEmail(user.getEmail()).getBody().getName());
